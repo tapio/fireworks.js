@@ -22,40 +22,15 @@
 <script src="../../flamethrower/tquery.textureutils.js"></script>
 <script src="../../comboemitter/comboemitter.js"></script>
 <script src="../../comboemitter/comboemitter3d.js"></script>
-<script src="../../comboemitter/comboemitter_flamethrower.js"></script>
+<script src="../comboemitter_flamethrower.js"></script>
 
 
-<body><div style="position: absolute; font-size: 200%; right: 0; z-index: 1">
-	<select id="skinSelect" onchange='character.loadSkin(this.value);'>
-		<option value="images/char.png">char</option>
-		<option value="images/3djesus.png">3djesus</option>
-		<option value="images/agentsmith.png">agentsmith</option>
-		<option value="images/batman.png">batman</option>
-		<option value="images/god.png">god</option>
-		<option value="images/jamesbond-1.png">jamesbond-1</option>
-		<option value="images/Joker.png">Joker</option>
-		<option value="images/Mario.png">Mario</option>
-		<option value="images/martialartist.png">martialartist</option>
-		<option value="images/robocop.png">robocop</option>
-		<option value="images/Sonicthehedgehog.png">Sonic the hedgehog</option>
-		<option value="images/Spiderman.png">Spiderman</option>
-		<option value="images/Superman.png">Superman</option>
-		<option value="images/theflash.png">theflash</option>
-		<option value="images/woody.png">woody</option>
-		<option value="images/Iron-Man-Minecraft-Skin.png">ironman</option>
-	</select>
-</div><script>
+<body><script>
 	var world	= tQuery.createWorld().boilerplate().start();
 	world.tCamera().position.z	= 1.8;
+	world.tRenderer().setClearColorHex( 0x000000, world.tRenderer().getClearAlpha() );
 
-	// load the minecraft character
-	// ```character.loadSkin(imageUrl)```
-	var character	= new tQuery.MinecraftChar({
-		skinUrl	: 'images/agentsmith.png'
-	}); 
-	// add the model to our world
-	character.model.addTo(world);
-
+//	world.removeCameraControls();
 
 	// add post processing
 	world.addEffectComposer()
@@ -65,6 +40,15 @@
 		.finish();
 
 if( true ){
+	// load the minecraft character
+	var character	= new tQuery.MinecraftChar({
+		skinUrl	: 'images/3djesus.png'
+	}); 
+	// add the model to our world
+	character.model.addTo(world);	
+}
+
+if( false ){
 	// initiate a spritesheet
 	var items	= new tQuery.Spritesheet({
 		url	: 'images/items/items.png',
@@ -83,11 +67,13 @@ if( true ){
 		item.addTo(character.parts.armR);
 	});
 }
+
+if( true ){
 	// make the head move
-	world.loop().hook(function(delta, now){
-		character.parts.headGroup.rotation.x	= Math.sin(now*1.5)/3;
-		character.parts.headGroup.rotation.y	= Math.sin(now)/3;
-	}); 
+	// world.loop().hook(function(delta, now){
+	// 	character.parts.headGroup.rotation.x	= Math.sin(now*1.5)/3;
+	// 	character.parts.headGroup.rotation.y	= Math.sin(now)/3;
+	// }); 
 	
 	// make the legs move
 	world.loop().hook(function(delta, now){
@@ -101,13 +87,29 @@ if( true ){
 		var angle	= 1/2 * now*Math.PI*2;
 		//character.parts.armR.rotation.x	= 1.4 * Math.cos(angle + Math.PI);
 		character.parts.armL.rotation.x	= 1.4 * Math.cos(angle);
-	});
+	});	
+}
 
 	character.parts.armR.rotation.x	= -Math.PI/2;	
-	
+
+if( false ){
+	world.loop().hook(function(delta, now){
+		var angle	= 1/20 * now*Math.PI*2;
+		var position	= character.model.get(0).position;
+		var rotation	= character.model.get(0).rotation;
+		position.x	= 2 * Math.cos(angle);
+		position.z	= -3 + 2 * Math.sin(angle);
+		rotation.y	= -angle;
+	});
+}
+
+
+
 	//////////////////////////////////////////////////////////////////////////
 	//	particles
-	var container	= tQuery.createObject3D().addTo(world).scale(1/10)
+if( true ){
+	var container	= tQuery.createObject3D().addTo(world)
+		.scale(1/20)
 	var flamethrower= new Fireworks.ComboEmitter.Flamethrower({
 		imagesUrl	: '../../assets/images/flame/',
 		soundsUrl	: '../../comboemitter/sounds/',
@@ -118,13 +120,20 @@ if( true ){
 		}
 	});
 
-	var source3D	= tQuery.createObject3D().addTo(character.parts.armR)
-		.translateX(-2.5)
-		.translateY(-5)
-		.translateZ(1)
+	var source3D	= tQuery.createCylinder(0.55, 0.0001, 2).addTo(character.parts.armR)
+		.translateY(-(12-2)/35)
+		.translateZ(1/8+2/35)
+		.geometry()
+			.rotateX(Math.PI/2)
+			.scaleBy(7* 1/35)
+			.translateZ(-1/8)
+			.back();
 	flamethrower.source3D(source3D.get(0))
-	var target3D	= tQuery.createObject3D().addTo(character.parts.armR)
-		.translateY(-15)
+	
+	
+	var target3D	= tQuery.createSphere().addTo(source3D)
+		.translateZ(1)
+		.scale(1/4)
 	flamethrower.target3D(target3D.get(0))
 
 	document.body.addEventListener('mousedown', function(){
@@ -132,6 +141,6 @@ if( true ){
 	});
 	document.body.addEventListener('mouseup', function(){
 		flamethrower.stop();
-	});
-
+	});	
+}
 </script></body>

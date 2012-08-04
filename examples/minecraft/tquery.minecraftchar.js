@@ -75,10 +75,13 @@ tQuery.register('MinecraftChar', function(opts){
 		
 		uvs[ (0 + rotateBy) % 4 ].u = tileU * tileUvW;
 		uvs[ (0 + rotateBy) % 4 ].v = tileV * tileUvH;
+
 		uvs[ (1 + rotateBy) % 4 ].u = tileU * tileUvW;
 		uvs[ (1 + rotateBy) % 4 ].v = tileV * tileUvH	+ h * tileUvH;
+
 		uvs[ (2 + rotateBy) % 4 ].u = tileU * tileUvW	+ w * tileUvW;
 		uvs[ (2 + rotateBy) % 4 ].v = tileV * tileUvH	+ h * tileUvH;
+
 		uvs[ (3 + rotateBy) % 4 ].u = tileU * tileUvW	+ w * tileUvW;
 		uvs[ (3 + rotateBy) % 4 ].v = tileV * tileUvH;
 	};
@@ -177,7 +180,6 @@ tQuery.register('MinecraftChar', function(opts){
 	armL.name	= "armL"
 	armL.position.x = 6;
 	armL.position.y = 4;
-	armL.rotation.z = Math.PI/32;
 	uvmap(armLgeo, 0, 48, 20, -4, 12);
 	uvmap(armLgeo, 1, 56, 20, -4, 12);
 	uvmap(armLgeo, 2, 48, 16, -4,  4, 1);
@@ -197,7 +199,6 @@ tQuery.register('MinecraftChar', function(opts){
 	armR.name	= "armR"
 	armR.position.x = -6;
 	armR.position.y =  4;
-	armR.rotation.z = -Math.PI/32;
 	uvmap(armRgeo, 0, 44, 20, 4, 12);
 	uvmap(armRgeo, 1, 52, 20, 4, 12);
 	uvmap(armRgeo, 2, 44, 16, 4, 4, 1);
@@ -269,7 +270,8 @@ tQuery.register('MinecraftChar', function(opts){
 	this.loadSkin(opts.skinUrl);
 
 	// scale down the whole player at geometry level
-	tQuery('mesh', playerModel).geometry().scaleBy(1/35)
+	tQuery('mesh', playerModel)
+		.geometry().scaleBy(1/35).back()
 	playerModel.traverseHierarchy(function(object3d){
 		object3d.position.multiplyScalar(1/35)
 	});
