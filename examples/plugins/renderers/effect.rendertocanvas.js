@@ -18,7 +18,7 @@ Fireworks.EffectsStackBuilder.prototype.renderToCanvas = function(opts)
 	return this; // for chained API
 
 
-	function buildDefaultContext(){
+	function buildDefaultContext() {
 		// build canvas element
 		var canvas = document.createElement('canvas');
 		canvas.width = window.innerWidth;
@@ -34,12 +34,12 @@ Fireworks.EffectsStackBuilder.prototype.renderToCanvas = function(opts)
 		return ctx;
 	}
 
-	function ctorTypeArc(){
-		return effect.onCreate(function(particle, particleIdx){
+	function ctorTypeArc() {
+		return effect.onCreate(function(particle, particleIdx) {
 			particle.renderToCanvas = {
 				size: 3
 			};
-		}).onRender(function(particle){
+		}).onRender(function(particle) {
 			var position = particle.position.vector;
 			var size = particle.renderToCanvas.size;
 
@@ -49,24 +49,24 @@ Fireworks.EffectsStackBuilder.prototype.renderToCanvas = function(opts)
 			ctx.fill();
 		});
 	};
-	function ctorTypeDrawImage(){
+	function ctorTypeDrawImage() {
 		// handle parameter polymorphism
-		if( typeof(opts.image) === 'string' ){
+		if ( typeof(opts.image) === 'string' ) {
 			var images = [new Image];
 			images[0].src = opts.image;
-		}else if( opts.image instanceof Image ){
+		} else if( opts.image instanceof Image ) {
 			var images = [opts.image];
-		}else if( opts.image instanceof Array ){
+		} else if( opts.image instanceof Array ) {
 			var images = opts.image;
-		}else console.assert(false, 'invalid .renderToCanvas() options')
+		} else console.assert(false, 'invalid .renderToCanvas() options')
 
-		return effect.onCreate(function(particle, particleIdx){
+		return effect.onCreate(function(particle, particleIdx) {
 			particle.renderToCanvas = {
 				scale: 1, // should that be there ? or in its own effect ?
 				opacity: 1, // should that be there ? or in its own effect ?
 				rotation: 0 * Math.PI
 			};
-		}).onRender(function(particle){
+		}).onRender(function(particle) {
 			var position = particle.position.vector;
 			var data = particle.renderToCanvas;
 			var canonAge = particle.lifeTime.normalizedAge();
@@ -83,13 +83,13 @@ Fireworks.EffectsStackBuilder.prototype.renderToCanvas = function(opts)
 			// set ctx.globalAlpha
 			ctx.globalAlpha	= data.opacity;
 			// draw the image itself
-			if( image instanceof Image ){
+			if ( image instanceof Image ) {
 				ctx.drawImage(image, -image.width/2, -image.height/2);
-			}else if( typeof(image) === 'object' ){
+			} else if( typeof(image) === 'object' ) {
 				ctx.drawImage(image.image
 					,  image.offsetX,  image.offsetY , image.width, image.height
 					, -image.width/2, -image.height/2, image.width, image.height);
-			}else console.assert(false);
+			} else console.assert(false);
 			// restore the context
 			ctx.restore();
 		});

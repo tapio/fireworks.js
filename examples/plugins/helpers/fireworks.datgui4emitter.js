@@ -1,16 +1,16 @@
-Fireworks.DatGui4Emitter	= function(emitter){
-	var gui		= new dat.GUI();
-	var effects	= emitter.effects();
+Fireworks.DatGui4Emitter = function(emitter){
+	var gui = new dat.GUI();
+	var effects = emitter.effects();
 	effects.forEach(function(effect, idx){
-		var effectName	= effect.name	|| "effect-"+idx;
-		var opts	= effect.opts	|| {};
-		var keys	= Object.keys(opts).filter(function(key){
-			if( opts[key] instanceof Fireworks.Vector )	return true;
-			if( typeof(opts[key]) === 'object' )		return false;
+		var effectName = effect.name || "effect-"+idx;
+		var opts = effect.opts || {};
+		var keys = Object.keys(opts).filter(function(key){
+			if( opts[key] instanceof Fireworks.Vector ) return true;
+			if( typeof(opts[key]) === 'object' ) return false;
 			return true;
 		});
 		if( keys.length ){
-			var folder	= gui.addFolder('Effect: '+effectName);
+			var folder = gui.addFolder('Effect: '+effectName);
 			keys.forEach(function(key){
 				if( opts[key] instanceof Fireworks.Vector ){
 					folder.add(opts[key], 'x').name(key+"X");
