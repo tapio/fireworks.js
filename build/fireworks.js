@@ -4,23 +4,23 @@ var Fireworks = {};
 //										//
 //////////////////////////////////////////////////////////////////////////////////
 
-Fireworks.EffectsStackBuilder	= function(emitter){
-	this._emitter	= emitter;
+Fireworks.EffectsStackBuilder = function(emitter){
+	this._emitter = emitter;
 };
 
 /**
- * Getter for the emitter 
+ * Getter for the emitter
 */
-Fireworks.EffectsStackBuilder.prototype.emitter	= function(){
-	return this._emitter;	
+Fireworks.EffectsStackBuilder.prototype.emitter = function(){
+	return this._emitter;
 };
 
-Fireworks.EffectsStackBuilder.prototype.back	= function(){
+Fireworks.EffectsStackBuilder.prototype.back = function(){
 	return this._emitter;
 }
 
-Fireworks.EffectsStackBuilder.prototype.createEffect	= function(name, opts){
-	var creator	= Fireworks.createEffect(name, opts).pushTo(this._emitter).back(this);
+Fireworks.EffectsStackBuilder.prototype.createEffect = function(name, opts){
+	var creator = Fireworks.createEffect(name, opts).pushTo(this._emitter).back(this);
 	creator.effect().emitter(this._emitter);
 	return creator;
 }
@@ -32,64 +32,64 @@ Fireworks.EffectsStackBuilder.prototype.createEffect	= function(name, opts){
 /**
  * Basic Fireworks.Effect builder
 */
-Fireworks.createEffect	= function(name, opts){
+Fireworks.createEffect = function(name, opts) {
 	// handle polymophism
-	if( typeof(name) === 'object' ){
-		opts	= name;
-		name	= undefined;
+	if( typeof(name) === 'object' ) {
+		opts = name;
+		name = undefined;
 	}
-	
-	var effect	= new Fireworks.Effect();
-	effect.opts	= opts;
-	effect.name	= name;
-	effect.back	= null;
-	var methods	= {
+
+	var effect = new Fireworks.Effect();
+	effect.opts = opts;
+	effect.name = name;
+	effect.back = null;
+	var methods = {
 		onCreate: function(val){
-			effect.onCreate	= val;
+			effect.onCreate = val;
 			return methods;
 		},
 		onBirth: function(val){
-			effect.onBirth	= val;
+			effect.onBirth = val;
 			return methods;
 		},
 		onUpdate: function(val){
-			effect.onUpdate	= val;
+			effect.onUpdate = val;
 			return methods;
 		},
 		onDeath: function(val){
-			effect.onDeath	= val;
+			effect.onDeath = val;
 			return methods;
 		},
 		onPreUpdate: function(val){
-			effect.onPreUpdate	= val;
+			effect.onPreUpdate = val;
 			return methods;
 		},
 		onPreRender: function(val){
-			effect.onPreRender	= val;
+			effect.onPreRender = val;
 			return methods;
 		},
 		onRender: function(val){
-			effect.onRender	= val;
+			effect.onRender = val;
 			return methods;
 		},
 		onPostRender: function(val){
-			effect.onPostRender	= val;
+			effect.onPostRender = val;
 			return methods;
 		},
 		onIntensityChange: function(val){
 			effect.onIntensityChange= val;
 			return methods;
 		},
-		pushTo	: function(emitter){
+		pushTo: function(emitter){
 			emitter.effects().push(effect);
-			return methods;	
+			return methods;
 		},
-		back	: function(value){
-			if( value === undefined )	return effect.back;	
-			effect.back	= value;
-			return methods;	
+		back: function(value){
+			if( value === undefined ) return effect.back;
+			effect.back = value;
+			return methods;
 		},
-		effect	: function(){
+		effect: function(){
 			return effect;
 		}
 	}
@@ -99,26 +99,26 @@ Fireworks.createEffect	= function(name, opts){
 /**
  * An effect to apply on particles
 */
-Fireworks.Effect	= function(){
-	this._emitter	= null;
+Fireworks.Effect = function(){
+	this._emitter = null;
 }
 
-Fireworks.Effect.prototype.destroy	= function(){
+Fireworks.Effect.prototype.destroy = function(){
 }
 
 /**
- * Getter/Setter for the emitter 
+ * Getter/Setter for the emitter
 */
-Fireworks.Effect.prototype.emitter	= function(value){
-	if( value === undefined )	return this._emitter;	
-	this._emitter	= value;
-	return this;	
+Fireworks.Effect.prototype.emitter = function(value){
+	if( value === undefined ) return this._emitter;
+	this._emitter = value;
+	return this;
 };
 
 /**
  * Callback called on particle creation
 */
-//Fireworks.Effect.prototype.onCreate	= function(){
+//Fireworks.Effect.prototype.onCreate = function(){
 //}
 //
 /**
@@ -126,35 +126,35 @@ Fireworks.Effect.prototype.emitter	= function(value){
  *
  * TODO to rename onSpawn
 */
-//Fireworks.Effect.prototype.onBirth	= function(){
+//Fireworks.Effect.prototype.onBirth = function(){
 //}
 //
-//Fireworks.Effect.prototype.onDeath	= function(){
+//Fireworks.Effect.prototype.onDeath = function(){
 //}
 //
-//Fireworks.Effect.prototype.onUpdate	= function(){
+//Fireworks.Effect.prototype.onUpdate = function(){
 //}
 
-Fireworks.createEmitter	= function(opts){
+Fireworks.createEmitter = function(opts){
 	return new Fireworks.Emitter(opts);
 }
 
 /**
  * The emitter of particles
 */
-Fireworks.Emitter	= function(opts){
-	this._nParticles	= opts.nParticles !== undefined ? opts.nParticles : 100;
-	this._particles		= [];
-	this._effects		= [];
-	this._started		= false;
-	this._onUpdated		= null;
-	this._intensity		= 0;
-	this._maxDeltaTime	= 1/3;
+Fireworks.Emitter = function(opts){
+	this._nParticles = opts.nParticles !== undefined ? opts.nParticles : 100;
+	this._particles = [];
+	this._effects = [];
+	this._started = false;
+	this._onUpdated = null;
+	this._intensity = 0;
+	this._maxDeltaTime = 1/3;
 
-	this._effectsStackBuilder	= new Fireworks.EffectsStackBuilder(this)
+	this._effectsStackBuilder = new Fireworks.EffectsStackBuilder(this)
 }
 
-Fireworks.Emitter.prototype.destroy	= function()
+Fireworks.Emitter.prototype.destroy = function()
 {
 	this._effects.forEach(function(effect){
 		effect.destroy();
@@ -166,34 +166,34 @@ Fireworks.Emitter.prototype.destroy	= function()
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//		Getters								//
+//        Getters                                                               //
 //////////////////////////////////////////////////////////////////////////////////
 
-Fireworks.Emitter.prototype.effects	= function(){
+Fireworks.Emitter.prototype.effects = function(){
 	return this._effects;
 }
-Fireworks.Emitter.prototype.effect	= function(name){
+Fireworks.Emitter.prototype.effect = function(name){
 	for(var i = 0; i < this._effects.length; i++){
-		var effect	= this._effects[i];
-		if( effect.name === name )	return effect;
+		var effect = this._effects[i];
+		if( effect.name === name ) return effect;
 	}
 	return null;
 }
 
-Fireworks.Emitter.prototype.particles	= function(){
+Fireworks.Emitter.prototype.particles = function(){
 	return this._particles;
 }
-Fireworks.Emitter.prototype.liveParticles	= function(){
+Fireworks.Emitter.prototype.liveParticles = function(){
 	return this._liveParticles;
 }
-Fireworks.Emitter.prototype.deadParticles	= function(){
+Fireworks.Emitter.prototype.deadParticles = function(){
 	return this._deadParticles;
 }
-Fireworks.Emitter.prototype.nParticles	= function(){
+Fireworks.Emitter.prototype.nParticles = function(){
 	return this._nParticles;
 }
 
-Fireworks.Emitter.prototype.effectsStackBuilder	= function(){
+Fireworks.Emitter.prototype.effectsStackBuilder = function(){
 	return this._effectsStackBuilder;
 }
 
@@ -201,157 +201,157 @@ Fireworks.Emitter.prototype.effectsStackBuilder	= function(){
 /**
  * Getter/setter for intensity
 */
-Fireworks.Emitter.prototype.intensity	= function(value){
+Fireworks.Emitter.prototype.intensity = function(value){
 	// if it is a getter, return value
-	if( value === undefined )	return this._intensity;
+	if( value === undefined ) return this._intensity;
 	// if the value didnt change, return for chained api
-	if( value === this._intensity )	return this;
+	if( value === this._intensity ) return this;
 	// backup the old value
-	var oldValue	= this._intensity;
+	var oldValue = this._intensity;
 	// update the value
-	this._intensity	= value;
+	this._intensity = value;
 	// notify all effects
 	this._effects.forEach(function(effect){
-		if( !effect.onIntensityChange )	return;
-		effect.onIntensityChange(this._intensity, oldValue);			
+		if( !effect.onIntensityChange ) return;
+		effect.onIntensityChange(this._intensity, oldValue);
 	}.bind(this));
-	return this;	// for chained API
+	return this; // for chained API
 }
 
 /**
  * Getter/setter for intensity
 */
-Fireworks.Emitter.prototype.maxDeltaTime	= function(value){
-	if( value === undefined )	return this._maxDeltaTime;
-	this._maxDeltaTime	= value;
+Fireworks.Emitter.prototype.maxDeltaTime = function(value){
+	if( value === undefined ) return this._maxDeltaTime;
+	this._maxDeltaTime = value;
 	return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-//		backward compatibility						//
+//        backward compatibility                                                //
 //////////////////////////////////////////////////////////////////////////////////
 
-Fireworks.Emitter.prototype.setParticleData	= function(particle, namespace, value){
+Fireworks.Emitter.prototype.setParticleData = function(particle, namespace, value){
 	particle[namespace] = value;
 }
 
-Fireworks.Emitter.prototype.getParticleData	= function(particle, namespace){
+Fireworks.Emitter.prototype.getParticleData = function(particle, namespace){
 	return particle[namespace];
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-//		Start function							//
+//        Start function                                                        //
 //////////////////////////////////////////////////////////////////////////////////
 
-Fireworks.Emitter.prototype.start	= function()
+Fireworks.Emitter.prototype.start = function()
 {
 	console.assert( this._effects.length > 0, "At least one effect MUST be set")
 	console.assert( this._started === false );
-	
-	this._particles		= new Array(this._nParticles);
+
+	this._particles	 = new Array(this._nParticles);
 	for(var i = 0; i < this._nParticles; i++){
-		this._particles[i]	= new Fireworks.Particle();
+		this._particles[i] = new Fireworks.Particle();
 	}
 
-	this._liveParticles	= [];
-	this._deadParticles	= this._particles.slice(0);
-	this._started		= true;
+	this._liveParticles = [];
+	this._deadParticles = this._particles.slice(0);
+	this._started = true;
 
 	// onCreate on all particles
 	this._effects.forEach(function(effect){
-		if( !effect.onCreate )	return;
+		if( !effect.onCreate ) return;
 		this._particles.forEach(function(particle, particleIdx){
-			effect.onCreate(particle, particleIdx);			
+			effect.onCreate(particle, particleIdx);
 		})
 	}.bind(this));
 	// set the intensity to 1
 	this.intensity(1)
 
-	return this;	// for chained API
+	return this; // for chained API
 }
 
-Fireworks.Emitter.prototype.update	= function(deltaTime){
+Fireworks.Emitter.prototype.update = function(deltaTime){
 	// bound the deltaTime to this._maxDeltaTime
-	deltaTime	= Math.min(this._maxDeltaTime, deltaTime)
+	deltaTime = Math.min(this._maxDeltaTime, deltaTime)
 	// honor effect.onPreUpdate
 	this._effects.forEach(function(effect){
-		if( !effect.onPreUpdate )	return;
-		effect.onPreUpdate(deltaTime);			
+		if( !effect.onPreUpdate ) return;
+		effect.onPreUpdate(deltaTime);
 	}.bind(this));
 	// update each particles
 	this._effects.forEach(function(effect){
-		if( !effect.onUpdate )	return;
+		if( !effect.onUpdate ) return;
 		this._liveParticles.forEach(function(particle){
-			effect.onUpdate(particle, deltaTime);			
+			effect.onUpdate(particle, deltaTime);
 		})
 	}.bind(this));
-	return this;	// for chained API
+	return this; // for chained API
 }
 
-Fireworks.Emitter.prototype.render	= function(){
+Fireworks.Emitter.prototype.render = function(){
 	this._effects.forEach(function(effect){
-		if( !effect.onPreRender )	return;
-		effect.onPreRender();			
+		if( !effect.onPreRender ) return;
+		effect.onPreRender();
 	}.bind(this));
 	this._effects.forEach(function(effect){
-		if( !effect.onRender )	return;
+		if( !effect.onRender ) return;
 		this._liveParticles.forEach(function(particle){
-			effect.onRender(particle);			
+			effect.onRender(particle);
 		})
 	}.bind(this));
 	this._effects.forEach(function(effect){
-		if( !effect.onPostRender )	return;
-		effect.onPostRender();			
+		if( !effect.onPostRender ) return;
+		effect.onPostRender();
 	}.bind(this));
-	return this;	// for chained API
+	return this; // for chained API
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-//										//
+//                                                                              //
 //////////////////////////////////////////////////////////////////////////////////
 
 /**
  * kill this particle
 */
-Fireworks.Emitter.prototype.killParticle	= function(particle)
+Fireworks.Emitter.prototype.killParticle = function(particle)
 {
-	var idx	= this._liveParticles.indexOf(particle);
+	var idx = this._liveParticles.indexOf(particle);
 	this._liveParticles.splice(idx, 1)
 	this._deadParticles.push(particle);
 	// do the death on all effects
 	this.effects().forEach(function(effect){
-		effect.onDeath && effect.onDeath(particle);			
+		effect.onDeath && effect.onDeath(particle);
 	}.bind(this));
 }
 
 /**
  * Spawn a particle
 */
-Fireworks.Emitter.prototype.spawnParticle	= function(){
-	// change the particles 
-	var particle	= this.deadParticles().pop();
+Fireworks.Emitter.prototype.spawnParticle = function(){
+	// change the particles
+	var particle = this.deadParticles().pop();
 	this.liveParticles().push(particle);
 	// do the birth on all effects
 	this.effects().forEach(function(effect){
-		effect.onBirth && effect.onBirth(particle);			
+		effect.onBirth && effect.onBirth(particle);
 	}.bind(this));
 }
-Fireworks.createLinearGradient	= function(opts){
-	var LinearGradient	= new Fireworks.LinearGradient(opts);
+Fireworks.createLinearGradient = function(opts){
+	var LinearGradient = new Fireworks.LinearGradient(opts);
 	return LinearGradient;
 }
 
 /**
  * The emitter of particles
 */
-Fireworks.LinearGradient	= function(opts){
+Fireworks.LinearGradient = function(opts){
 	this._keyPoints	= [];
 }
 
-Fireworks.LinearGradient.prototype.push	= function(x, y){
+Fireworks.LinearGradient.prototype.push = function(x, y){
 	this._keyPoints.push({
-		x	: x,
-		y	: y
+		x: x,
+		y: y
 	});
 	return this;
 }
@@ -359,39 +359,38 @@ Fireworks.LinearGradient.prototype.push	= function(x, y){
 /**
  * Compute a value for this LinearGradient
 */
-Fireworks.LinearGradient.prototype.get	= function(x){
+Fireworks.LinearGradient.prototype.get = function(x){
 	for( var i = 0; i < this._keyPoints.length; i++ ){
 		var keyPoint	= this._keyPoints[i];
 		if( x <= keyPoint.x )	break;
 	}
 
-	if( i === 0 )	return this._keyPoints[0].y;
+	if( i === 0 ) return this._keyPoints[0].y;
 
-	var prev	= this._keyPoints[i-1];
-	var next	= this._keyPoints[i];
-	
-	var ratio	= (x - prev.x) / (next.x - prev.x)
-	var y		= prev.y + ratio * (next.y - prev.y)
-	
+	var prev = this._keyPoints[i-1];
+	var next = this._keyPoints[i];
+	var ratio = (x - prev.x) / (next.x - prev.x)
+	var y = prev.y + ratio * (next.y - prev.y)
+
 	return y;
 };
 /**
  * The emitter of particles
 */
-Fireworks.Particle	= function(){
+Fireworks.Particle = function(){
 }
 
-Fireworks.Particle.prototype.set	= function(key, value){
-	this[key]	= value;
+Fireworks.Particle.prototype.set = function(key, value){
+	this[key] = value;
 	return this[key];
 }
 
-Fireworks.Particle.prototype.get	= function(key){
+Fireworks.Particle.prototype.get = function(key){
 	return this[key];
 }
 
-Fireworks.Particle.prototype.has	= function(key){
-	return this[key] !== undefined	? true : false;
+Fireworks.Particle.prototype.has = function(key){
+	return this[key] !== undefined ? true : false;
 }
 Fireworks.Shape	= function(){
 }
